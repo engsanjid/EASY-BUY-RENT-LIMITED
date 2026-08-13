@@ -54,7 +54,7 @@ export default function AddPaymentModal({
     if (customerId === "" || type !== "rent" || !selectedCustomer) return;
     const rentPayments = selectedCustomer.paymentHistory?.filter((p) => p.type === "rent") || [];
     const nextWeek = rentPayments.length
-      ? Math.max(...rentPayments.map((p) => p.week ?? 0)) + 1
+      ? Math.max(...rentPayments.map((p) => Number(p.week ?? 0))) + 1
       : 1;
     setWeek(nextWeek);
     setAmount(selectedCustomer.weeklyRentAmount || 0);

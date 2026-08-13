@@ -1,38 +1,42 @@
+// এই টাইপ দুটি যুক্ত করুন
+export type PaymentType = "rent" | "loan" | "deposit" | "other";
+
+export type PaymentRecordStatus = "paid" | "pending" | "rejected" | "failed";
+
 export type CustomerStatus = "active" | "pending" | "rejected" | "inactive";
-export type OwnershipStatus = "rented" | "owned" | "pending" | "not_assigned";
-// (আপনার প্রজেক্টের বিদ্যমান টাইপগুলোর সাথে "not_assigned" যুক্ত করে নিন)
-export type PaymentType = "rent" | "loan";
-export type PaymentRecordStatus = "paid" | "pending" | "overdue";
 
-export type PaymentRecord = {
-  id: number;
+export type OwnershipStatus = 
+  | "rented" 
+  | "renting" 
+  | "owned" 
+  | "buying" 
+  | "not_assigned" 
+  | "pending";
+
+export interface PaymentRecord {
+  id: string | number;
   type: PaymentType;
-  week?: number;
   amount: number;
-  date: string; // dd/mm/yyyy
+  date: string;
   status: PaymentRecordStatus;
-};
+  week?: number | string;
+}
 
-export type Customer = {
+export interface Customer {
   id: number;
-  uniqueId: string; // e.g. "EBR-0001" — login-এর জন্য phone-এর সাথে লাগবে
   name: string;
   phone: string;
+  email?: string;
   address?: string;
-
+  joined: string;
   status: CustomerStatus;
-
-  vehicleId: number;
-  vehicleName: string;
   ownershipStatus: OwnershipStatus;
-
+  vehicleName?: string;
   weeklyRentAmount: number;
   totalRentPaid: number;
-
   loanAmount: number;
   loanRepaid: number;
   loanOutstanding: number;
-
-  joined: string;
   paymentHistory: PaymentRecord[];
-};
+  [key: string]: any;
+}

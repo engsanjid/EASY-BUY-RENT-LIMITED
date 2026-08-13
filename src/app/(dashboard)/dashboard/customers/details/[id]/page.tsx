@@ -1,4 +1,3 @@
-// src/app/(dashboard)/dashboard/customers/details/[id]/page.tsx
 "use client";
 
 import Link from "next/link";
@@ -32,7 +31,9 @@ export default function CustomerDetailsPage() {
   const [customer, setCustomer] = useState<Customer | undefined>();
 
   useEffect(() => {
-    setCustomer(findCustomerById(Number(params.id)));
+    if (params?.id) {
+      setCustomer(findCustomerById(Number(params.id)));
+    }
   }, [params.id]);
 
   if (!customer) {
@@ -44,8 +45,9 @@ export default function CustomerDetailsPage() {
   }
 
   function handleStatus(status: CustomerStatus) {
-    updateCustomer(customer!.id, { status });
-    setCustomer(findCustomerById(customer!.id));
+    if (!customer) return;
+    updateCustomer(customer.id, { status });
+    setCustomer(findCustomerById(customer.id));
   }
 
   return (
@@ -65,7 +67,7 @@ export default function CustomerDetailsPage() {
               <span
                 className={clsx(
                   "rounded-full px-3 py-1 text-xs font-semibold capitalize",
-                  statusStyles[customer.status]
+                  statusStyles[customer.status] || "bg-slate-100 text-slate-700"
                 )}
               >
                 {customer.status}
@@ -77,7 +79,7 @@ export default function CustomerDetailsPage() {
                 </span>
               )}
 
-              {customer.ownershipStatus === "renting" && (
+              {(customer.ownershipStatus as string) === "renting" && (
                 <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700">
                   Renting
                 </span>
@@ -167,15 +169,15 @@ export default function CustomerDetailsPage() {
         </div>
 
         <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3">
-          <Detail label="Phone" value={customer.phone} />
-          <Detail label="Email" value={customer.email || "-"} />
-          <Detail label="Address" value={customer.address || "-"} />
+          <Detail label="Phone" value={customer.phone || "-"} />
+          <Detail label="Email" value={(customer as any).email || "-"} />
+          <Detail label="Address" value={(customer as any).address || "-"} />
           <Detail label="Vehicle" value={customer.vehicleName || "Not assigned"} />
-          <Detail label="Weekly Rent" value={`£${customer.weeklyRentAmount}`} />
-          <Detail label="Total Rent Paid" value={`£${customer.totalRentPaid}`} />
-          <Detail label="Loan Amount" value={`£${customer.loanAmount}`} />
-          <Detail label="Loan Repaid" value={`£${customer.loanRepaid}`} />
-          <Detail label="Loan Outstanding" value={`£${customer.loanOutstanding}`} />
+          <Detail label="Weekly Rent" value={`£${customer.weeklyRentAmount ?? 0}`} />
+          <Detail label="Total Rent Paid" value={`£${customer.totalRentPaid ?? 0}`} />
+          <Detail label="Loan Amount" value={`£${customer.loanAmount ?? 0}`} />
+          <Detail label="Loan Repaid" value={`£${customer.loanRepaid ?? 0}`} />
+          <Detail label="Loan Outstanding" value={`£${customer.loanOutstanding ?? 0}`} />
         </div>
       </div>
 
@@ -186,7 +188,7 @@ export default function CustomerDetailsPage() {
         </div>
 
         <div className="divide-y">
-          {customer.paymentHistory.length === 0 ? (
+          {!customer.paymentHistory || customer.paymentHistory.length === 0 ? (
             <div className="px-6 py-10 text-center text-slate-400">
               No payment records yet.
             </div>

@@ -142,7 +142,7 @@ export function addPaymentToCustomer(
   if (!customer) return { customer: undefined, justCompleted: false };
 
   const newId = customer.paymentHistory.length
-    ? Math.max(...customer.paymentHistory.map((p) => p.id)) + 1
+    ? Math.max(...customer.paymentHistory.map((p) => Number(p.id))) + 1
     : 1;
 
   customer.paymentHistory = [{ id: newId, ...payment }, ...customer.paymentHistory];
